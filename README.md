@@ -1,16 +1,49 @@
-# React + Vite
+# TaskFlow Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern project management application built with React. Organize your work with Kanban-style boards, columns, and tasks.
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
+[TaskFlow](https://your-vercel-url.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Features
+- JWT Authentication (Login & Register)
+- Google OAuth Login
+- Create and manage multiple boards
+- Kanban columns (To Do, In Progress, Done)
+- Add, delete tasks with priority and due date
+- Drag and drop tasks between columns
+- Search boards
+- Custom avatar selection
+- Profile management
+- Responsive design
 
-## React Compiler
+## 🛠️ Tech Stack
+- React
+- React Router DOM
+- Vite
+- CSS
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ⚙️ Setup
 
-## Expanding the ESLint configuration
+1. Clone the repo
+```bash
+git clone https://github.com/shruti4265/TaskFlow-frontend
+cd TaskFlow-frontend
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Create `.env` file
+
+VITE_API_BASE_URL=
+
+4. Run the app
+```bash
+npm run dev
+```
+
+## 🔗 Backend
+[TaskFlow Backend](https://github.com/shruti4265/TaskFlow-backend)
