@@ -11,6 +11,7 @@ function Register() {
     const [confirmPassword,setConfirmPassword]=useState("");
     const [error,setError]=useState("");
     const [loading, setLoading] = useState(false);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     function handle_name(event){
         setUsername(event.target.value);
     }
@@ -26,6 +27,22 @@ function Register() {
     async function signup(){
         if(!username || !email || !password || !confirmPassword){
             alert("Please fill out all fields");
+            return;
+        }
+        if(!emailRegex.test(email)){
+          alert("Please enter a valid email address");
+          return;
+        }
+        if(password.length < 8){
+          alert("Password must be at least 8 characters");
+          return;
+        }
+        if(!/[A-Z]/.test(password)){
+            alert("Password must contain at least one uppercase letter");
+            return;
+        }
+        if(!/[0-9]/.test(password)){
+            alert("Password must contain at least one number");
             return;
         }
         if(password !== confirmPassword){
