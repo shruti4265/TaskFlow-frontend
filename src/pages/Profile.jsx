@@ -27,6 +27,7 @@ function Profile() {
         }
     }
     async function handleLogout() {
+        setLoggingOut(true);
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         navigate('/login');
@@ -76,6 +77,7 @@ function Profile() {
     const [selectedProfilePic, setSelectedProfilePic] = useState(userData?.profile_pic || '1');
     const [boardCount, setBoardCount] = useState(0);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
     useEffect(() => {
         const fetchBoardCount = async () => {
             try{
@@ -158,8 +160,8 @@ function Profile() {
                                 <p>Permanently delete your account and all data</p>
                             </div>
                             <div style={{display:'flex',gap:'1rem'}}>
-                                <button className='btn-logout' onClick={handleLogout}>
-                                    Logout
+                                <button className='btn-logout' onClick={handleLogout} disabled={loggingOut}>
+                                    {loggingOut ? "Logging out..." : "Logout"}
                                 </button>
                                 <button className='delete-account-btn' onClick={() => setShowConfirmation(true)}>
                                     Delete Account

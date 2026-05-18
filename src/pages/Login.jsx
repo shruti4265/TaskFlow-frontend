@@ -7,6 +7,7 @@ function Login() {
   const navigate = useNavigate();
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
+  const [loading, setLoading] = useState(false);
   function handleEmail(event){
     setEmail(event.target.value);
   }
@@ -19,6 +20,7 @@ function Login() {
       return;
     }
     try{
+      setLoading(true); 
       const response=await fetch(import.meta.env.VITE_API_BASE_URL+"/login",{
         method:"POST",
         headers:{
@@ -42,6 +44,8 @@ function Login() {
       }
     }catch(err){
       console.log(err);
+    }finally{
+      setLoading(false);
     }
   }
   return (
@@ -64,7 +68,9 @@ function Login() {
             <input type="password" placeholder="••••••••" onChange={handlePassword} />
           </div>
 
-          <button className="btn-primary" onClick={signin}>Sign In</button>
+          <button className="btn-primary" onClick={signin} disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
           <p className="login-footer">
             Don't have an account? <Link to="/register">Sign up</Link>
           </p>

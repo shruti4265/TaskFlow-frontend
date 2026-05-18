@@ -10,6 +10,7 @@ function Register() {
     const [password,setPassword]=useState("");
     const [confirmPassword,setConfirmPassword]=useState("");
     const [error,setError]=useState("");
+    const [loading, setLoading] = useState(false);
     function handle_name(event){
         setUsername(event.target.value);
     }
@@ -32,6 +33,7 @@ function Register() {
             return;
         }
         try{
+            setLoading(true); 
             const response = await fetch(import.meta.env.VITE_API_BASE_URL+"/register",{
                 method:"POST",
                 headers:{
@@ -59,6 +61,8 @@ function Register() {
             }
         }catch(err){
             console.log(err);
+        } finally{
+          setLoading(false);
         }
         
     }
@@ -92,7 +96,9 @@ function Register() {
             <input type="password" placeholder="••••••••"onChange={handle_confirmedPassword} />
           </div>
 
-          <button className="btn-primary" onClick={signup}>Sign Up</button>
+          <button className="btn-primary" onClick={signup} disabled={loading}>
+            {loading ? "Creating account..." : "Sign Up"}
+          </button>
 
           <p className="login-footer">
             Already have an account? <Link to="/login">Sign in</Link>
