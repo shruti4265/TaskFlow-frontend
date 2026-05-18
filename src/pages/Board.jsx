@@ -16,16 +16,18 @@ function Board() {
     const columnColors = ['column-box-one', 'column-box-two', 'column-box-three'];
     const [status_id, setStatus_id] = useState(null);
     const [showCard, setShowCard] = useState(false);
+    const [deletingCardId, setDeletingCardId] = useState(null);
 
     const handleDeleteCard = async (cardId) => {
-        try{
+        try {
+            setDeletingCardId(cardId);
             const response = await fetch(
-                import.meta.env.VITE_API_BASE_URL+"/cards/"+cardId,
+                import.meta.env.VITE_API_BASE_URL + "/cards/" + cardId,
                 {
-                    method:"DELETE",
-                    headers:{
-                        Authorization:`Bearer ${localStorage.getItem("token")}`,
-                        "Content-Type":"application/json"
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "application/json"
                     }
                 }
             )
@@ -33,9 +35,11 @@ function Board() {
                 throw new Error("Failed to delete card");
             }
             setCard(prev => prev.filter(c => c.id !== cardId));
-        }catch(err){
+        } catch(err) {
             console.log(err);
             alert("Error deleting card");
+        } finally {
+            setDeletingCardId(null);
         }
     }
     const fetchBoard = async () => {
@@ -99,7 +103,13 @@ function Board() {
                                     .filter(c => c.column_id === col.id)
                                     .map(c => (
                                        <div className="task-card" key={c.id}>
-                                           <button className="task-delete-btn" onClick={() => handleDeleteCard(c.id)}><DeleteIcon /></button>
+                                           <button 
+                                                className="task-delete-btn" 
+                                                onClick={() => handleDeleteCard(c.id)}
+                                                disabled={deletingCardId === c.id}
+                                            >
+                                                {deletingCardId === c.id ? "..." : <DeleteIcon />}
+                                            </button>
                                            <h4 className="task-title">{c.title}</h4>
                                            <p className="task-description">{c.description}</p>
                                            <div className="task-footer">

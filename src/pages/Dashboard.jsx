@@ -14,23 +14,27 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [search,setSearch]=useState("");
+  const [deletingId, setDeletingId] = useState(null);
   const navigate = useNavigate();
   async function handleDeleteBoard(boardId) {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(import.meta.env.VITE_API_BASE_URL + "/boards/" + boardId, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
+        setDeletingId(boardId);
+        const token = localStorage.getItem('token');
+        const response = await fetch(import.meta.env.VITE_API_BASE_URL + "/boards/" + boardId, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (response.ok) {
+            setBoards(prev => prev.filter(board => board.id !== boardId));
+        } else {
+            console.error("Error deleting board:", await response.json());
         }
-      });
-      if (response.ok) {
-        setBoards(prev => prev.filter(board => board.id !== boardId));
-      } else {
-        console.error("Error deleting board:", await response.json());
-      }
     } catch (err) {
-      console.error("Network error:", err);
+        console.error("Network error:", err);
+    } finally {
+        setDeletingId(null);
     }
   }
   useEffect(() => {
@@ -93,11 +97,15 @@ function Dashboard() {
                   <span className="task-count">{Number(board.tasks ?? 0)}</span>
                   <span className="task-label">tasks</span>
                 </div>
-                <button className="delete-btn" onClick={(e) => {
-                     e.stopPropagation();
-                    handleDeleteBoard(board.id);
-                  }}>
-                  <DeleteIcon />
+                <button 
+                    className="delete-btn" 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteBoard(board.id);
+                    }}
+                    disabled={deletingId === board.id}
+                >
+                    {deletingId === board.id ? "..." : <DeleteIcon />}
                 </button>
               </div>
             ))

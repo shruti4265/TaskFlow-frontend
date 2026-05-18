@@ -46,7 +46,6 @@ function Register() {
                 alert(result.message || "Something went wrong");
                 console.log(error);
             } else {
-                console.log("✅ Success:", result);
                 setError(""); 
                 setUsername("");
                 setEmail("");
