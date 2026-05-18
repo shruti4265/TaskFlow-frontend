@@ -106,7 +106,6 @@ function Profile() {
 
                 <div className='profile-card'>
 
-                    {/* Avatar Section */}
                     <div className='profile-section'>
                         <h3>Profile Picture</h3>
                         <p>Choose an picture to represent you</p>
@@ -127,7 +126,6 @@ function Profile() {
                         </div>
                     </div>
 
-                    {/* User Info Section */}
                     <div className='profile-section'>
                         <h3>User Information</h3>
                         <p>View your account details</p>
@@ -153,7 +151,6 @@ function Profile() {
                         </div>
                     </div>
 
-                    {/* Danger Zone */}
                     <div className='profile-section danger-zone'>
                         <div className='danger-header'>
                             <div>
@@ -165,7 +162,7 @@ function Profile() {
                                     Logout
                                 </button>
                                 <button className='delete-account-btn' onClick={() => setShowConfirmation(true)}>
-                                    🗑 Delete Account
+                                    Delete Account
                                 </button>
                             </div>
                         </div>
