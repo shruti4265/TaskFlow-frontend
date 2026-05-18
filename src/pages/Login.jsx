@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import './global.css'
 import { Link,useNavigate } from 'react-router-dom'
 import BoltIcon from '@mui/icons-material/Bolt';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 function Login() {
   const navigate = useNavigate();
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   function handleEmail(event){
     setEmail(event.target.value);
   }
@@ -65,7 +68,16 @@ function Login() {
 
           <div className="input-group">
             <label>Password</label>
-            <input type="password" placeholder="••••••••" onChange={handlePassword} />
+            <div className="input-wrapper">
+              <input 
+                type={showPassword ? "text" : "password"} 
+                placeholder="••••••••" 
+                onChange={handlePassword} 
+              />
+              <span className="eye-icon" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </span>
+            </div>
           </div>
 
           <button className="btn-primary" onClick={signin} disabled={loading}>

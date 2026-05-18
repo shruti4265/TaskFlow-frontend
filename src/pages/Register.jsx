@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './global.css';
 import BoltIcon from '@mui/icons-material/Bolt';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 function Register() {
     const navigate = useNavigate();
@@ -11,6 +13,8 @@ function Register() {
     const [confirmPassword,setConfirmPassword]=useState("");
     const [error,setError]=useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     function handle_name(event){
         setUsername(event.target.value);
@@ -103,13 +107,31 @@ function Register() {
           </div>
 
           <div className="input-group">
-            <label>Password</label>
-            <input type="password" placeholder="••••••••"onChange={handle_password} />
+              <label>Password</label>
+              <div className="input-wrapper">
+                  <input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      onChange={handle_password} 
+                  />
+                  <span className="eye-icon" onClick={() => setShowPassword(!showPassword)}>
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </span>
+              </div>
           </div>
 
           <div className="input-group">
-            <label>Confirm Password</label>
-            <input type="password" placeholder="••••••••"onChange={handle_confirmedPassword} />
+              <label>Confirm Password</label>
+              <div className="input-wrapper">
+                  <input 
+                      type={showConfirmPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      onChange={handle_confirmedPassword} 
+                  />
+                  <span className="eye-icon" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </span>
+              </div>
           </div>
 
           <button className="btn-primary" onClick={signup} disabled={loading}>
