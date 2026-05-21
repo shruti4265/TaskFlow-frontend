@@ -35,7 +35,6 @@ function Login() {
       if (!response.ok) {
         alert(result.message || "Something went wrong");
       } else {
-        console.log("✅ Success:", result);
         setEmail("");
         setPassword("");
         alert("Login successful! ");
