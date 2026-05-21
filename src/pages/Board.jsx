@@ -26,11 +26,14 @@ function Board() {
         setCard(prev=>{
             const updated = [...prev];
             const cardIndex = updated.findIndex(c => c.id === draggableId);
-            if(cardIndex === -1) return prev;
-            updated[cardIndex] = {
-                ...updated[cardIndex],
-                column_id: destination.droppableId,
-                position: destination.index
+            const [movedCard] = updated.splice(cardIndex,1);
+            movedCard.column_id=destination.droppableId;
+            const destCards = updated.filter(c => c.column_id === destination.droppableId);
+            if(destCards.length === 0||destination.index >= destCards.length){
+                updated.push(movedCard);
+            }else {
+                const insertAt = updated.indexOf(destCards[destination.index]);
+                updated.splice(insertAt, 0, movedCard);
             }
             return updated;
         });
