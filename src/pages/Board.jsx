@@ -1,5 +1,6 @@
 import React, { useState,useEffect  } from 'react';
 import { Link, useParams,useNavigate } from 'react-router-dom';
+import {DragDropContext, Droppable, Draggable} from '@hello-pangea/dnd';
 import Navbar from './components/Navbar';
 import NewCard from './components/NewCard';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,7 +18,40 @@ function Board() {
     const [status_id, setStatus_id] = useState(null);
     const [showCard, setShowCard] = useState(false);
     const [deletingCardId, setDeletingCardId] = useState(null);
-
+    
+    const handleDragEnd = async (result) =>{
+        const { source, destination, draggableId } = result;
+        if(!destination) return;
+        if(source.droppableId === destination.droppableId && source.index === destination.index) return;
+        setCard(prev=>{
+            const updated = [...prev];
+            const cardIndex = updated.findIndex(c => c.id === draggableId);
+            if(cardIndex === -1) return prev;
+            updated[cardIndex] = {
+                ...updated[cardIndex],
+                column_id: destination.droppableId,
+                position: destination.index
+            }
+            return updated;
+        });
+        try{
+            await fetch(import.meta.env.VITE_API_BASE_URL + "/cards/" + draggableId + "/move", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },body: JSON.stringify({
+                    column_id: destination.droppableId,
+                    position: destination.index
+                })
+            });
+        }
+        catch(err){
+            console.log(err);
+            alert("Error updating card position");  
+            fetchBoard();
+        }
+    }
     const handleDeleteCard = async (cardId) => {
         try {
             setDeletingCardId(cardId);
@@ -90,52 +124,63 @@ function Board() {
                 <p className='boardDesc'>
                     {card ? card.filter(c => c.id !== null).length : 0} Tasks
                 </p>
-
-                <div className='status'>
-                    {columns && columns.map((col, index) => (
-                        <div key={col.id}>
-                            <div>
-                                <h3>{col.name}</h3>
-                                <div className="count">{card ? card.filter(c => c.column_id === col.id).length : 0}</div>
-                            </div>
-                            <div className={`column-box ${columnColors[index % columnColors.length]}`}>
-                                {card && card
-                                    .filter(c => c.column_id === col.id)
-                                    .map(c => (
-                                       <div className="task-card" key={c.id}>
-                                           <button 
-                                                className="task-delete-btn" 
-                                                onClick={() => handleDeleteCard(c.id)}
-                                                disabled={deletingCardId === c.id}
-                                            >
-                                                {deletingCardId === c.id ? "..." : <DeleteIcon />}
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <div className='status'>
+                        {columns && columns.map((col, index) => (
+                            <div key={col.id}>
+                                <div>
+                                    <h3>{col.name}</h3>
+                                    <div className="count">{card ? card.filter(c => c.column_id === col.id).length : 0}</div>
+                                </div>
+                                <Droppable droppableId={col.id}>
+                                    {provided=>(
+                                        <div className={`column-box ${columnColors[index % columnColors.length]}`} ref={provided.innerRef} {...provided.droppableProps}>
+                                            {card && card
+                                                .filter(c => c.column_id === col.id)
+                                                .sort((a,b)=> a.position - b.position)
+                                                .map((c,cardIndex) => (
+                                                    <Draggable  draggableId={c.id} index={cardIndex} key={c.id}>
+                                                        {provided=>(
+                                                            <div className="task-card" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                                <button 
+                                                                    className="task-delete-btn" 
+                                                                    onClick={() => handleDeleteCard(c.id)}
+                                                                    disabled={deletingCardId === c.id}
+                                                                >
+                                                                    {deletingCardId === c.id ? "..." : <DeleteIcon />}
+                                                                </button>
+                                                                <h4 className="task-title">{c.title}</h4>
+                                                                <p className="task-description">{c.description}</p>
+                                                                <div className="task-footer">
+                                                                   <span className={`priority-badge priority-${c.priority.toLowerCase()}`}>
+                                                                       {c.priority}
+                                                                   </span>
+                                                                   <span className="task-date">
+                                                                        {new Date(c.due_date).toLocaleDateString('en-GB', {
+                                                                            day: '2-digit',
+                                                                            month: '2-digit',
+                                                                            year: '2-digit'
+                                                                        })}
+                                                                    </span>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        
+                                                    </Draggable>
+                                                ))
+                                            }
+                                            <button className='add-task-btn' onClick={()=>{setShowCard(true); setStatus_id(col.id)}}>
+                                                + Add Task
                                             </button>
-                                           <h4 className="task-title">{c.title}</h4>
-                                           <p className="task-description">{c.description}</p>
-                                           <div className="task-footer">
-                                               <span className={`priority-badge priority-${c.priority.toLowerCase()}`}>
-                                                   {c.priority}
-                                               </span>
-                                               <span className="task-date">
-                                                    {new Date(c.due_date).toLocaleDateString('en-GB', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: '2-digit'
-                                                    })}
-                                                </span>
-                                                
-                                            </div>
                                         </div>
-                                    ))
-                                }
-                                <button className='add-task-btn' onClick={()=>{setShowCard(true); setStatus_id(col.id)}}>
-                                    + Add Task
-                                </button>
+                                    )}
+                                </Droppable>
                             </div>
-                        </div>
-                    ))}
-
-                </div>
+                        ))}
+    
+                    </div>
+                </DragDropContext>
             </div>
         </div>
     );
