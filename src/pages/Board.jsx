@@ -45,6 +45,7 @@ function Board() {
                     position: destination.index
                 })
             });
+            await fetchBoard();
         }
         catch(err){
             console.log(err);
